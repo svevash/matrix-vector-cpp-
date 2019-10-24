@@ -3,9 +3,7 @@
 
 using namespace mat_vec;
 
-Vector::Vector(size_t size, double value) {
-    vecSize = size;
-    vec = new double[size];
+Vector::Vector(size_t size, double value) : vecSize(size), vec(new double[size]) {
     for (size_t i = 0; i < size; i++) {
         vec[i] = value;
     }
@@ -16,9 +14,7 @@ Vector::~Vector() {
     vecSize = 0;
 }
 
-Vector::Vector(const Vector &src) {
-    vec = new double[src.vecSize];
-    vecSize = src.vecSize;
+Vector::Vector(const Vector &src) : vecSize(src.vecSize), vec(new double[src.vecSize]) {
     for (size_t i = 0; i < src.vecSize; i++) {
         vec[i] = src.vec[i];
     }

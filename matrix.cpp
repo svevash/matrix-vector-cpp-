@@ -35,10 +35,7 @@ Matrix::Matrix(size_t rows, size_t cols, double value) : matSizeRow(rows), matSi
     }
 }
 
-Matrix::Matrix(const Matrix &src) {
-    matSizeRow = src.matSizeRow;
-    matSizeCol = src.matSizeCol;
-    mat = new double*[matSizeRow];
+Matrix::Matrix(const Matrix &src) : matSizeRow(src.matSizeRow), matSizeCol(src.matSizeCol), mat(new double*[matSizeRow]) {
     for (size_t i = 0; i < matSizeRow; i++) {
         mat[i] = new double[matSizeCol];
         for (size_t j = 0; j < matSizeCol; j++) {
