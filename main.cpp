@@ -55,6 +55,10 @@ TEST_CASE("Operator [] vector") {
     }
     double k = A[1];
     REQUIRE(abs(k - 10) < eps);
+    CHECK_THROWS(A[5]);
+    CHECK_THROWS(A[6]);
+    const Vector B(5, 0);
+    CHECK_THROWS(B[6]);
 }
 
 //// 6
@@ -76,6 +80,8 @@ TEST_CASE("Normalized vector") {
     for (int i = 0; i < A.size(); ++i) {
         REQUIRE(abs(A[i] - 10) < eps);
     }
+    Vector C(5, 0);
+    CHECK_THROWS(A = C.normalized());
 }
 
 //// 8
@@ -86,6 +92,8 @@ TEST_CASE("Normalize vector") {
     for (int i = 0; i < A.size(); ++i) {
         REQUIRE(abs(A[i] - 0.5) < eps);
     }
+    Vector B(5, 0);
+    CHECK_THROWS(B.normalize());
 }
 
 //// 9
@@ -108,6 +116,10 @@ TEST_CASE("Operator + vector") {
     for (int i = 0; i < A.size(); ++i) {
         REQUIRE(abs(A[i] - 15) < eps);
     }
+
+    Vector D(3, 8);
+    CHECK_THROWS(C = A + D);
+    CHECK_THROWS(C += D);
 }
 
 //// 10
@@ -130,6 +142,10 @@ TEST_CASE("Operator - vector") {
     for (int i = 0; i < A.size(); ++i) {
         REQUIRE(abs(A[i] - 3) < eps);
     }
+
+    Vector D(3, 8);
+    CHECK_THROWS(C = A - D);
+    CHECK_THROWS(C -= D);
 }
 
 //// 11
@@ -152,6 +168,10 @@ TEST_CASE("Operator ^ vector") {
     for (int i = 0; i < A.size(); ++i) {
         REQUIRE(abs(A[i] - 50) < eps);
     }
+
+    Vector D(3, 8);
+    CHECK_THROWS(C = A ^ D);
+    CHECK_THROWS(C ^= D);
 }
 
 //// 12
@@ -159,6 +179,9 @@ TEST_CASE("Operator * vector (скалярное)") {
     Vector A(4, 10);
     Vector B(4, 5);
     REQUIRE(abs(A * B - 200) < eps);
+
+    Vector D(3, 8);
+    CHECK_THROWS(A * D);
 }
 
 //// 13
@@ -203,6 +226,8 @@ TEST_CASE("Operator / vector (vec / k)") {
     for (int i = 0; i < A.size(); ++i) {
         REQUIRE(abs(A[i] - 2) < eps);
     }
+    CHECK_THROWS(B = A / 0);
+    CHECK_THROWS(A /= 0);
 }
 
 //// 15
@@ -266,6 +291,11 @@ TEST_CASE("Operator * (vector * matrix)") {
     REQUIRE(abs(B[0] - 135) < eps);
     REQUIRE(abs(B[1] - 150) < eps);
     REQUIRE(abs(B[2] - 165) < eps);
+
+    Vector D(4, 7);
+
+    CHECK_THROWS(C = D * A);
+    CHECK_THROWS(D *= A);
 }
 
 ////~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~MATRIX~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -358,6 +388,8 @@ TEST_CASE("Reshape matrix") {
             REQUIRE(abs(A.get(i, j) - 8) < eps);
         }
     }
+    Matrix B(5, 7, 8);
+    CHECK_THROWS(B.reshape(4, 7));
 }
 
 //// 7
@@ -368,6 +400,12 @@ TEST_CASE("Operator [][] matrix") {
     A.get(0, 0) = 42.0;
     b = A.get(0, 0);
     REQUIRE(abs(b - 42) < eps);
+
+    CHECK_THROWS(A.get(5, 5));
+    CHECK_THROWS(A.get(4, 6));
+    CHECK_THROWS(A.get(6, 7));
+    const Matrix C(5, 5, 0);
+    CHECK_THROWS(C.get(6, 7));
 }
 
 //// 8
@@ -391,6 +429,9 @@ TEST_CASE("Operator + matrix") {
             REQUIRE(abs(A.get(i, j) - 40) < eps);
         }
     }
+    Matrix D(6, 7, 5);
+    CHECK_THROWS(A = B + D);
+    CHECK_THROWS(A += D);
 }
 
 //// 9
@@ -414,6 +455,9 @@ TEST_CASE("Operator - matrix") {
             REQUIRE(abs(A.get(i, j) - 20) < eps);
         }
     }
+    Matrix D(6, 7, 5);
+    CHECK_THROWS(A = B - D);
+    CHECK_THROWS(A -= D);
 }
 
 //// 10
@@ -437,6 +481,10 @@ TEST_CASE("Operator * (matrix * matrix)") {
             REQUIRE(abs(A.get(i, j) - 280) < eps);
         }
     }
+    Matrix D(6, 3, 11);
+    Matrix G(2, 7, 12);
+    CHECK_THROWS(A = D * G);
+    CHECK_THROWS(D *= G);
 }
 
 //// 11
@@ -483,6 +531,8 @@ TEST_CASE("Operator / (matrix / const") {
             REQUIRE(abs(A.get(i, j) - 6) < eps);
         }
     }
+    CHECK_THROWS(A = A / 0);
+    CHECK_THROWS(A /= 0);
 }
 
 //// 13
@@ -529,6 +579,9 @@ TEST_CASE("determinant matrix") {
 
     Matrix B(1, 5.0);
     REQUIRE(abs(B.det() - 5) < eps);
+
+    Matrix C(5, 6, 7);
+    CHECK_THROWS(C.det());
 }
 
 //// 15
@@ -554,6 +607,8 @@ TEST_CASE("Operator * (matrix * vector)") {
     REQUIRE(abs(C[1] - 32) < eps);
     REQUIRE(abs(C[2] - 50) < eps);
     REQUIRE(abs(C[3] - 68) < eps);
+
+    CHECK_THROWS(A * C);
 }
 
 //// 16
@@ -595,6 +650,8 @@ TEST_CASE("Inversion matrix") {
     REQUIRE(abs(B.get(3, 1) - 0.5) < eps);
     REQUIRE(abs(B.get(3, 2) - 0.5) < eps);
     REQUIRE(abs(B.get(3, 3)) < eps);
+    Matrix C(5, 6, 7);
+    CHECK_THROWS(C.inv());
 }
 
 //// 17

@@ -17,11 +17,7 @@ Matrix::Matrix(size_t size, double value) : matSizeRow(size), matSizeCol(size), 
 Matrix Matrix::eye(size_t size) {
     Matrix res(size);
     for (size_t i = 0; i < res.matSizeRow; i++) {
-        for (size_t j = 0; j < res.matSizeCol; j++) {
-            if (i == j) {
-                res.mat[i][j] = 1;
-            }
-        }
+        res.mat[i][i] = 1;
     }
     return res;
 }
@@ -75,6 +71,10 @@ Matrix::~Matrix() {
 }
 
 void Matrix::reshape(size_t rows, size_t cols) {
+    if (matSizeRow * matSizeCol != rows * cols) {
+        throw("wrong size for reshaping");
+    }
+
     Matrix res(rows, cols, 0);
 
     size_t i = 0, i1 = 0, j = 0, j1 = 0;
@@ -97,14 +97,23 @@ void Matrix::reshape(size_t rows, size_t cols) {
 }
 
 double Matrix::get(size_t row, size_t col) const {
+    if (row >= matSizeRow || col >= matSizeCol) {
+        throw("out of range");
+    }
     return mat[row][col];
 }
 
 double& Matrix::get(size_t row, size_t col) {
+    if (row >= matSizeRow || col >= matSizeCol) {
+        throw("out of range");
+    }
     return mat[row][col];
 }
 
 Matrix Matrix::operator+(const Matrix &rhs) const {
+    if (matSizeCol != rhs.matSizeCol || matSizeRow != rhs.matSizeRow) {
+        throw("wrong size");
+    }
     Matrix res(matSizeRow, matSizeCol);
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < matSizeCol; j++) {
@@ -115,6 +124,9 @@ Matrix Matrix::operator+(const Matrix &rhs) const {
 }
 
 Matrix& Matrix::operator+=(const Matrix &rhs) {
+    if (matSizeCol != rhs.matSizeCol || matSizeRow != rhs.matSizeRow) {
+        throw("wrong size");
+    }
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < matSizeCol; j++) {
             mat[i][j] += rhs.mat[i][j];
@@ -124,6 +136,9 @@ Matrix& Matrix::operator+=(const Matrix &rhs) {
 }
 
 Matrix Matrix::operator-(const Matrix &rhs) const {
+    if (matSizeCol != rhs.matSizeCol || matSizeRow != rhs.matSizeRow) {
+        throw("wrong size");
+    }
     Matrix res(matSizeRow, matSizeCol);
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < matSizeCol; j++) {
@@ -134,6 +149,9 @@ Matrix Matrix::operator-(const Matrix &rhs) const {
 }
 
 Matrix& Matrix::operator-=(const Matrix &rhs) {
+    if (matSizeCol != rhs.matSizeCol || matSizeRow != rhs.matSizeRow) {
+        throw("wrong size");
+    }
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < matSizeCol; j++) {
             mat[i][j] -= rhs.mat[i][j];
@@ -143,6 +161,9 @@ Matrix& Matrix::operator-=(const Matrix &rhs) {
 }
 
 Matrix Matrix::operator*(const Matrix &rhs) const {
+    if (matSizeCol != rhs.matSizeRow) {
+        throw("cols != rows");
+    }
     Matrix res(matSizeRow, rhs.matSizeCol, 0);
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < rhs.matSizeCol; j++) {
@@ -155,6 +176,9 @@ Matrix Matrix::operator*(const Matrix &rhs) const {
 }
 
 Matrix& Matrix::operator*=(const Matrix &rhs) {
+    if (matSizeCol != rhs.matSizeRow) {
+        throw("cols != rows");
+    }
     Matrix res(matSizeRow, rhs.matSizeCol, 0);
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < rhs.matSizeCol; j++) {
@@ -187,6 +211,9 @@ Matrix& Matrix::operator*=(double k) {
 }
 
 Matrix Matrix::operator/(double k) const {
+    if (k == 0) {
+        throw("divide by zero");
+    }
     Matrix res(matSizeRow, matSizeCol);
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < matSizeCol; j++) {
@@ -197,6 +224,9 @@ Matrix Matrix::operator/(double k) const {
 }
 
 Matrix& Matrix::operator/=(double k) {
+    if (k == 0) {
+        throw("divide by zero");
+    }
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < matSizeCol; j++) {
             mat[i][j] /= k;
@@ -244,6 +274,9 @@ bool Matrix::operator!=(const mat_vec::Matrix &rhs) const {
 }
 
 Vector Matrix::operator*(const mat_vec::Vector &vec) const {
+    if (matSizeCol != vec.size()) {
+        throw("cols != rows");
+    }
     Vector res(matSizeRow);
     for (size_t i = 0; i < matSizeRow; i++) {
         for (size_t j = 0; j < matSizeCol; j++) {
@@ -282,6 +315,9 @@ double calcDet(vector<vector<double>> &Matrix) {
 }
 
 double Matrix::det() const {
+    if (matSizeRow != matSizeCol) {
+        throw("matrix is not square");
+    }
     vector<vector<double>> matvec(matSizeRow, vector<double>(matSizeRow));
     for (int i = 0; i < matSizeRow; i++) {
         for (int j = 0; j < matSizeRow; ++j) {
@@ -292,6 +328,9 @@ double Matrix::det() const {
 }
 
 Matrix Matrix::inv() const {
+    if (matSizeRow != matSizeCol) {
+        throw("matrix is not square");
+    }
     double d = this->det();
     Matrix res(matSizeRow);
     Matrix tmp(matSizeRow - 1);

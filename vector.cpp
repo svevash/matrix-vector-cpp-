@@ -87,6 +87,9 @@ Vector& Vector::operator*=(double k) {
 
 void Vector::normalize() {
     double countNorm = norm();
+    if (countNorm == 0) {
+        throw("vector norm is zero");
+    }
     for (size_t i = 0; i < vecSize; i++) {
         vec[i] /= countNorm;
     }
@@ -95,6 +98,9 @@ void Vector::normalize() {
 Vector Vector::normalized() const {
     Vector res(*this);
     double countNorm = norm();
+    if (countNorm == 0) {
+        throw("vector norm is zero");
+    }
     for (size_t i = 0; i < vecSize; i++) {
         res.vec[i] /= countNorm;
     }
@@ -102,14 +108,23 @@ Vector Vector::normalized() const {
 }
 
 double Vector::operator[](size_t n) const {
+    if (n >= vecSize) {
+        throw("out of range");
+    }
     return vec[n];
 }
 
 double& Vector::operator[](size_t n) {
+    if (n >= vecSize) {
+        throw("out of range");
+    }
     return vec[n];
 }
 
 Vector Vector::operator/(double k) const {
+    if (k == 0) {
+        throw("divide by zero");
+    }
     Vector res(vecSize);
     for (size_t i = 0; i < vecSize; i++) {
         res.vec[i] = vec[i] / k;
@@ -118,6 +133,9 @@ Vector Vector::operator/(double k) const {
 }
 
 Vector& Vector::operator/=(double k) {
+    if (k == 0) {
+        throw("divide by zero");
+    }
     for (size_t i = 0; i < vecSize; i++) {
         vec[i] /= k;
     }
@@ -125,6 +143,9 @@ Vector& Vector::operator/=(double k) {
 }
 
 Vector Vector::operator+(const Vector &rhs) const {
+    if (vecSize != rhs.vecSize) {
+        throw("different size");
+    }
     Vector res(vecSize);
     for (size_t i = 0; i < vecSize; i++) {
         res.vec[i] = vec[i] + rhs.vec[i];
@@ -133,6 +154,9 @@ Vector Vector::operator+(const Vector &rhs) const {
 }
 
 Vector& Vector::operator+=(const Vector &rhs) {
+    if (vecSize != rhs.vecSize) {
+        throw("different size");
+    }
     for (size_t i = 0; i < vecSize; i++) {
         vec[i] = vec[i] + rhs.vec[i];
     }
@@ -140,6 +164,9 @@ Vector& Vector::operator+=(const Vector &rhs) {
 }
 
 Vector Vector::operator-(const Vector &rhs) const {
+    if (vecSize != rhs.vecSize) {
+        throw("different size");
+    }
     Vector res(vecSize);
     for (size_t i = 0; i < vecSize; i++) {
         res.vec[i] = vec[i] - rhs.vec[i];
@@ -148,6 +175,9 @@ Vector Vector::operator-(const Vector &rhs) const {
 }
 
 Vector& Vector::operator-=(const Vector &rhs) {
+    if (vecSize != rhs.vecSize) {
+        throw("different size");
+    }
     for (size_t i = 0; i < vecSize; i++) {
         vec[i] = vec[i] - rhs.vec[i];
     }
@@ -155,6 +185,9 @@ Vector& Vector::operator-=(const Vector &rhs) {
 }
 
 Vector Vector::operator^(const mat_vec::Vector &rhs) const {
+    if (vecSize != rhs.vecSize) {
+        throw("different size");
+    }
     Vector res(vecSize);
     for (size_t i = 0; i < vecSize; i++) {
         res.vec[i] = vec[i] * rhs.vec[i];
@@ -163,6 +196,9 @@ Vector Vector::operator^(const mat_vec::Vector &rhs) const {
 }
 
 Vector& Vector::operator^=(const mat_vec::Vector &rhs) {
+    if (vecSize != rhs.vecSize) {
+        throw("different size");
+    }
     for (size_t i = 0; i < vecSize; i++) {
         vec[i] = vec[i] * rhs.vec[i];
     }
@@ -170,6 +206,9 @@ Vector& Vector::operator^=(const mat_vec::Vector &rhs) {
 }
 
 double Vector::operator*(const Vector &rhs) const {
+    if (vecSize != rhs.vecSize) {
+        throw("different size");
+    }
     double res = 0;
     for (size_t i = 0; i < vecSize; i++) {
         res += vec[i] * rhs.vec[i];
@@ -187,6 +226,11 @@ Vector mat_vec::operator*(double k, const Vector &v) {
 
 Vector Vector::operator*(const Matrix &mat) const {
     std::pair<size_t, size_t> p = mat.shape();
+
+    if (vecSize != p.first) {
+        throw("cols != rows");
+    }
+
     Vector res(p.second);
     for (size_t i = 0; i < p.second; ++i) {
         for(size_t j = 0; j < vecSize; j++) {
@@ -198,6 +242,11 @@ Vector Vector::operator*(const Matrix &mat) const {
 
 Vector& Vector::operator*=(const Matrix &mat) {
     std::pair<size_t, size_t> p = mat.shape();
+
+    if (vecSize != p.first) {
+        throw("cols != rows");
+    }
+
     Vector res(p.second);
     for (size_t i = 0; i < p.second; ++i) {
         for(size_t j = 0; j < vecSize; j++) {
