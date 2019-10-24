@@ -5,7 +5,6 @@
 #include <vector>
 #include "Vector.h"
 
-
 namespace mat_vec {
 
     class Matrix {
